@@ -1,4 +1,4 @@
-FROM --platform=linux/amd64 debian:bookworm-slim
+FROM debian:bookworm-slim
 
 ENV DEBIAN_FRONTEND=noninteractive \
     LANG=C.UTF-8 \
@@ -74,7 +74,7 @@ RUN curl -fsSL https://github.com/mikefarah/yq/releases/latest/download/yq_linux
 
 # 4. User-space package managers (mise, uv), Coder CLI, and Antigravity CLI (agy)
 # Installed into /usr/local/bin so PVC mount on /home/dev does not shadow them
-RUN MISE_INSTALL_PATH=/usr/local/bin/mise curl -fsSL https://mise.run | sh \
+RUN curl -fsSL https://mise.run | env MISE_INSTALL_PATH=/usr/local/bin/mise sh \
     && curl -fsSL https://astral.sh/uv/install.sh | env UV_INSTALL_DIR=/usr/local/bin sh \
     && curl -fsSL https://coder.com/install.sh | sh \
     && curl -fsSL https://antigravity.google/cli/install.sh | bash \
