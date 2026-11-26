@@ -1,0 +1,64 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: antigravity-rc
+  labels:
+    app: antigravity-rc
+spec:
+  serviceName: antigravity-rc
+  replicas: 1
+  selector:
+    matchLabels:
+      app: antigravity-rc
+  template:
+    metadata:
+      labels:
+        app: antigravity-rc
+    spec:
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1000
+        runAsGroup: 1000
+        fsGroup: 1000
+      containers:
+        - name: antigravity-rc
+          image: ghcr.io/momoirodouhu/antigravity-rc-container:latest
+          imagePullPolicy: IfNotPresent
+          stdin: true
+          tty: true
+          env:
+            - name: HOME
+              value: /home/dev
+            # Optional: set GEMINI_API_KEY via Secret if not using interactive OAuth
+            # - name: GEMINI_API_KEY
+            #   valueFrom:
+            #     secretKeyRef:
+            #       name: antigravity-secrets
+            #       key: gemini-api-key
+          volumeMounts:
+            - name: home-dev
+              mountPath: /home/dev
+            # Optional: mount kubeconfig as read-only outside /home/dev
+            # - name: kubeconfig
+            #   mountPath: /etc/kube
+            #   readOnly: true
+          resources:
+            requests:
+              cpu: "500m"
+              memory: "1Gi"
+            limits:
+              cpu: "2"
+              memory: "4Gi"
+      # volumes:
+      #   - name: kubeconfig
+      #     secret:
+      #       secretName: antigravity-kubeconfig
+  volumeClaimTemplates:
+    - metadata:
+        name: home-dev
+      spec:
+        accessModes:
+          - ReadWriteOnce
+        resources:
+          requests:
+            storage: 10Gi
