@@ -80,7 +80,7 @@ RUN curl -fsSL https://mise.run | env MISE_INSTALL_PATH=/usr/local/bin/mise sh \
     && curl -fsSL https://coder.com/install.sh | sh
 
 # renovate: datasource=github-releases depName=google-antigravity/antigravity-cli
-ARG AGY_VERSION=1.5.18
+ARG AGY_VERSION=1.5.19
 RUN curl -fsSL "https://github.com/google-antigravity/antigravity-cli/releases/download/${AGY_VERSION}/agy_cli_linux_x64.tar.gz" \
        -o /tmp/agy.tar.gz \
     && tar -xzf /tmp/agy.tar.gz -C /tmp antigravity \
