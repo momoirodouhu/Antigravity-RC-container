@@ -77,13 +77,15 @@ RUN curl -fsSL https://github.com/mikefarah/yq/releases/latest/download/yq_linux
 # Installed into /usr/local/bin so PVC mount on /home/dev does not shadow them
 RUN curl -fsSL https://mise.run | env MISE_INSTALL_PATH=/usr/local/bin/mise sh \
     && curl -fsSL https://astral.sh/uv/install.sh | env UV_INSTALL_DIR=/usr/local/bin sh \
-    && curl -fsSL https://coder.com/install.sh | sh \
-    && curl -fsSL https://antigravity.google/cli/install.sh | bash \
-    && if [ -x /root/.local/bin/agy ]; then \
-         install -m 0755 /root/.local/bin/agy /usr/local/bin/agy && rm -f /root/.local/bin/agy; \
-       elif [ -x /root/.antigravity/bin/agy ]; then \
-         install -m 0755 /root/.antigravity/bin/agy /usr/local/bin/agy && rm -rf /root/.antigravity; \
-       fi \
+    && curl -fsSL https://coder.com/install.sh | sh
+
+# renovate: datasource=github-releases depName=google-antigravity/antigravity-cli
+ARG AGY_VERSION=1.5.18
+RUN curl -fsSL "https://github.com/google-antigravity/antigravity-cli/releases/download/${AGY_VERSION}/agy_cli_linux_x64.tar.gz" \
+       -o /tmp/agy.tar.gz \
+    && tar -xzf /tmp/agy.tar.gz -C /tmp antigravity \
+    && install -m 0755 /tmp/antigravity /usr/local/bin/agy \
+    && rm -f /tmp/agy.tar.gz /tmp/antigravity \
     && command -v agy
 
 # 5. Non-root user (UID/GID 1000) & system-level environment profile + entrypoint
